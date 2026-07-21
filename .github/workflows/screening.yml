@@ -1,0 +1,50 @@
+name: Screening Forex
+
+on:
+  schedule:
+    # WIB = UTC+7. Jalan setelah 1 candle H1 pertama sesi terbentuk.
+    - cron: "15 8 * * 1-5"   # 15:15 WIB — sesi London
+    - cron: "15 13 * * 1-5"  # 20:15 WIB — sesi New York
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Sesi (london / ny)"
+        required: false
+        default: "london"
+
+jobs:
+  screening:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Tentukan mode dari jam (untuk run terjadwal)
+        id: mode
+        run: |
+          if [ -n "${{ github.event.inputs.mode }}" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
+          elif [ "$(date -u +%H)" -lt 11 ]; then
+            echo "mode=london" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=ny" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Jalankan screening
+        run: python screener.py ${{ steps.mode.outputs.mode }}
+
+      - name: Commit signals.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add signals.json
+          git diff --cached --quiet || git commit -m "screening ${{ steps.mode.outputs.mode }} $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
