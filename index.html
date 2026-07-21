@@ -1,478 +1,213 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Papan Sinyal · Screening IDX</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-    rel="stylesheet"
-  />
-  <style>
-    :root {
-      --bg: #0B1420; --panel: #0E1826; --line: #1B2C40; --line-hi: #152238;
-      --text: #EDEDE5; --muted: #8A97A8; --dim: #5E6B7C;
-      --gold: #C9A227; --green: #3FB68C; --red: #E2574C;
-      --blue: #4E9AD4; --purple: #B07CD8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh;
-    }
-    .mono { font-family: 'IBM Plex Mono', monospace; }
-    ::selection { background: var(--gold); color: var(--bg); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screening Forex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1420; --panel:#151D2C; --panel-2:#1B2536; --line:#243049;
+    --text:#E7ECF5; --muted:#8B97AD; --faint:#5B6780;
+    --buy:#2DD4BF; --sell:#F27059; --watch:#E8B44C;
+    --buy-dim:rgba(45,212,191,.12); --sell-dim:rgba(242,112,89,.12);
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Archivo",system-ui,sans-serif;
+    min-height:100vh; padding:24px 16px 48px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+  .mono{font-family:"IBM Plex Mono",monospace}
 
-    header { border-bottom: 1px solid var(--line); background: var(--panel); }
-    .header-inner {
-      max-width: 1100px; margin: 0 auto; padding: 16px 20px;
-      display: flex; flex-wrap: wrap; gap: 8px;
-      align-items: flex-end; justify-content: space-between;
-    }
-    .eyebrow {
-      font-size: 10px; text-transform: uppercase;
-      letter-spacing: 0.25em; color: var(--gold);
-    }
-    h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; }
-    .session { font-size: 12px; color: var(--muted); text-align: right; }
-    .updated { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  /* ---------- header ---------- */
+  header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  h1{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+  h1 span{color:var(--faint);font-weight:500}
+  .meta{font-size:.78rem;color:var(--muted)}
+  .meta .stale{color:var(--watch);font-weight:600}
+  .meta .mode-tag{
+    display:inline-block;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:5px;padding:1px 8px;margin-right:6px;color:var(--text);
+    font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  }
 
-    main { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+  /* ---------- session bar (signature) ---------- */
+  .sessions{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 10px;margin-bottom:22px}
+  .sessions .label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+  .track{position:relative;height:26px;border-radius:6px;background:var(--panel-2);overflow:hidden}
+  .band{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:600;letter-spacing:.05em;color:var(--muted)}
+  .band.asia{background:rgba(139,151,173,.10)}
+  .band.london{background:rgba(45,212,191,.10);color:var(--buy)}
+  .band.ny{background:rgba(242,112,89,.10);color:var(--sell)}
+  .now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);box-shadow:0 0 6px rgba(231,236,245,.8)}
+  .hours{display:flex;justify-content:space-between;font-size:.62rem;color:var(--faint);margin-top:5px}
+  .next-run{font-size:.74rem;color:var(--muted);margin-top:8px}
+  .next-run b{color:var(--text)}
 
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
-    .tab {
-      border: 1px solid var(--line); background: var(--panel); color: var(--muted);
-      border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit;
-    }
-    .tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-    .tab-desc { font-size: 11px; color: var(--dim); margin-left: 4px; }
+  /* ---------- cards ---------- */
+  .section-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:20px 2px 10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .card.signal-BUY{border-left:3px solid var(--buy)}
+  .card.signal-SELL{border-left:3px solid var(--sell)}
+  .card.watch{opacity:.82}
+  .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .pair{font-size:1.05rem;font-weight:700;letter-spacing:.02em}
+  .badges{display:flex;gap:6px}
+  .badge{font-size:.66rem;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;text-transform:uppercase}
+  .badge.BUY{background:var(--buy-dim);color:var(--buy)}
+  .badge.SELL{background:var(--sell-dim);color:var(--sell)}
+  .badge.WATCH{background:rgba(232,180,76,.12);color:var(--watch)}
+  .badge.trend{background:var(--panel-2);color:var(--muted)}
+  .levels{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.82rem}
+  .lv{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:3px 0}
+  .lv .k{color:var(--muted)}
+  .lv .v{font-weight:500}
+  .lv.entry .v{font-weight:600}
+  .lv.sl .v{color:var(--sell)}
+  .lv.tp .v{color:var(--buy)}
+  .sub{font-size:.72rem;color:var(--faint);margin-top:9px;display:flex;justify-content:space-between}
 
-    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
-    .search {
-      width: 230px; border: 1px solid var(--line); background: var(--panel);
-      color: var(--text); border-radius: 6px; padding: 8px 12px; font-size: 14px;
-      font-family: inherit;
-    }
-    .search::placeholder { color: var(--dim); }
-    .search:focus { outline: none; border-color: var(--gold); }
-    .count { margin-left: auto; font-size: 11px; color: var(--muted); }
-
-    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-    @media (min-width: 1024px) { .grid { grid-template-columns: 3fr 2fr; } }
-
-    .table-wrap { border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
-    thead tr { border-bottom: 1px solid var(--line); background: var(--panel); }
-    th {
-      padding: 12px 16px; font-size: 10px; font-weight: 500;
-      text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted);
-    }
-    tbody tr { border-bottom: 1px solid var(--line); cursor: pointer; }
-    tbody tr:last-child { border-bottom: 0; }
-    tbody tr:hover { background: #111E30; }
-    tbody tr.active { background: var(--line-hi); }
-    td { padding: 12px 16px; vertical-align: top; }
-    .right { text-align: right; }
-    .ticker { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
-    .sub { font-size: 12px; color: var(--muted); }
-    .setup-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-    .empty { padding: 40px 16px; text-align: center; font-size: 14px; color: var(--dim); }
-    .empty.err { color: var(--red); }
-
-    .badge {
-      display: inline-block; border-radius: 999px; padding: 2px 8px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600;
-    }
-    .chip-pantau {
-      display: inline-block; margin-left: 6px; border-radius: 4px;
-      padding: 1px 6px; font-size: 9px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--dim); border: 1px dashed var(--dim);
-    }
-    tr.pantau td { opacity: 0.55; }
-    .toggle {
-      border: 1px solid var(--line); background: var(--panel); color: var(--muted);
-      border-radius: 6px; padding: 8px 12px; font-size: 12px; cursor: pointer;
-      font-family: inherit;
-    }
-    .toggle.on { border-color: var(--gold); color: var(--gold); }
-    .warn-box {
-      margin-top: 16px; border: 1px dashed var(--dim); border-radius: 6px;
-      padding: 10px 12px; font-size: 12px; line-height: 1.5; color: var(--muted);
-    }
-
-    .panel {
-      border: 1px solid var(--line); background: var(--panel);
-      border-radius: 8px; padding: 20px; align-self: start;
-    }
-    .panel-head { display: flex; justify-content: space-between; align-items: flex-start; }
-    .panel h2 { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; }
-    .panel-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .setup-label {
-      font-size: 10px; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--muted);
-    }
-
-    .bars { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-    .bar-row { display: flex; align-items: center; gap: 8px; }
-    .bar-label {
-      width: 80px; flex-shrink: 0; font-size: 10px;
-      text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted);
-    }
-    .bar-track { height: 6px; flex: 1; border-radius: 999px; background: var(--line); }
-    .bar-fill { height: 6px; border-radius: 999px; }
-    .bar-val {
-      width: 32px; flex-shrink: 0; text-align: right;
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-    }
-
-    .riskmap { margin-top: 16px; }
-    .riskmap-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .riskmap-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
-    .riskmap-rr { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
-    .riskmap-rr b { color: var(--text); font-weight: 500; }
-    .riskmap-track { position: relative; height: 32px; border-radius: 6px; background: var(--bg); }
-    .zone { position: absolute; top: 0; height: 100%; }
-    .marker-line { position: absolute; top: 0; height: 100%; width: 1px; opacity: 0.9; }
-    .riskmap-labels { position: relative; height: 34px; margin-top: 4px; }
-    .marker-label {
-      position: absolute; top: 0; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .marker-label .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-    .marker-label .v { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text); }
-
-    .notes { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px; }
-    .notes-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
-    .notes-body { margin-top: 6px; font-size: 14px; line-height: 1.6; color: #C7CEDA; }
-
-    .disclaimer { margin-top: 24px; text-align: center; font-size: 11px; color: var(--dim); }
-  </style>
+  .empty{background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius);padding:28px;text-align:center;color:var(--muted);font-size:.85rem}
+  .error{border-color:var(--sell);color:var(--sell)}
+  footer{margin-top:34px;font-size:.7rem;color:var(--faint);text-align:center}
+  @media (prefers-reduced-motion:no-preference){
+    .card{transition:transform .12s ease}
+    .card:hover{transform:translateY(-2px)}
+  }
+</style>
 </head>
 <body>
+<div class="wrap">
   <header>
-    <div class="header-inner">
-      <div>
-        <p class="eyebrow">Bursa Efek Indonesia · Screening 3 Sesi</p>
-        <h1>Papan Sinyal</h1>
-      </div>
-      <div>
-        <p class="session mono" id="session-label">…</p>
-        <p class="updated mono" id="updated-label">Memuat data…</p>
-      </div>
-    </div>
+    <h1>Screening Forex <span>/ session breakout H1</span></h1>
+    <div class="meta" id="meta">Memuat…</div>
   </header>
 
-  <main>
-    <div class="tabs" id="tabs"></div>
-    <div class="controls">
-      <input class="search" id="search" placeholder="Cari ticker atau nama emiten…" />
-      <button class="toggle on" id="toggle-pantau">Pantau: tampil</button>
-      <span class="count mono" id="count"></span>
-    </div>
-    <div class="grid">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Emiten</th><th>Strategi</th>
-              <th class="right">Harga</th><th class="right">Skor</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-            <tr><td colspan="4" class="empty">Memuat sinyal…</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="panel" id="panel">
-        <p class="sub">Memuat…</p>
-      </div>
-    </div>
-    <p class="disclaimer">
-      Sinyal dihasilkan otomatis dari screening — bukan rekomendasi investasi.
-      Keputusan transaksi tetap di tanganmu.
-    </p>
-  </main>
+  <div class="sessions">
+    <div class="label">Sesi pasar hari ini (WIB)</div>
+    <div class="track" id="track"></div>
+    <div class="hours"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+    <div class="next-run" id="nextRun"></div>
+  </div>
 
-  <script>
-    "use strict";
+  <div id="content"><div class="empty">Memuat signals.json…</div></div>
 
-    // -----------------------------------------------------------------------
-    // SUMBER DATA:
-    // 1. ./signals.json  -> file di repo yang sama (GitHub Pages, tanpa CORS)
-    // 2. URL raw GitHub  -> cadangan kalau dibuka di luar Pages (mis. lokal)
-    // -----------------------------------------------------------------------
-    var DATA_SOURCES = [
-      "./signals.json",
-      "https://raw.githubusercontent.com/auliaabshor-dev/screening-Saham-IDX/main/signals.json"
-    ];
+  <footer>Alat bantu screening pribadi — bukan saran finansial. Data: Yahoo Finance (delay).</footer>
+</div>
 
-    var STRATEGY_META = {
-      "Semua": { color: "#8A97A8", desc: "Semua sinyal dari sesi terakhir" },
-      "Swing": { color: "#C9A227", desc: "Breakout = aktif (PF 1.69, target TP2). Setup lain: pantau" },
-      "BPJS":  { color: "#4E9AD4", desc: "Pantau saja — gagal backtest (PF 0.59)" },
-      "BSJP":  { color: "#B07CD8", desc: "Strong close + volume = aktif (PF 3.09). Jual di open besok" }
-    };
+<script>
+(function(){
+  // ---------- strip sesi (jam WIB) ----------
+  // Asia 07-14, London 14-22, NY 19-04(+1) WIB
+  var track = document.getElementById('track');
+  function band(cls, name, from, to){
+    var el = document.createElement('div');
+    el.className = 'band ' + cls;
+    el.style.left = (from/24*100) + '%';
+    el.style.width = ((to-from)/24*100) + '%';
+    el.textContent = name;
+    track.appendChild(el);
+  }
+  band('asia','ASIA',7,14);
+  band('london','LONDON',14,22);
+  band('ny','NY',19,24);
+  band('ny','',0,4);
 
-    var SESSION_LABEL = {
-      pagi:  "Sesi Pagi · 09:45 WIB",
-      siang: "Sesi Siang · 12:15 WIB",
-      sore:  "Sesi Sore · 16:30 WIB"
-    };
+  function wibNow(){
+    var now = new Date();
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 7*60)*60000);
+  }
+  var w = wibNow();
+  var frac = (w.getHours() + w.getMinutes()/60) / 24;
+  var mark = document.createElement('div');
+  mark.className = 'now';
+  mark.style.left = (frac*100) + '%';
+  track.appendChild(mark);
 
-    var state = {
-      data: null,
-      status: "loading",   // loading | live | error
-      query: "",
-      tab: "Semua",
-      selected: null,
-      showPantau: true
-    };
-
-    function esc(s) {
-      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-      });
+  // run berikutnya: 15:15 (London) & 20:15 (NY) WIB, Sen-Jum
+  var runs = [[15,15,'London'],[20,15,'New York']];
+  var next = null, hNow = w.getHours()*60 + w.getMinutes(), day = w.getDay();
+  if (day >= 1 && day <= 5){
+    for (var i=0;i<runs.length;i++){
+      if (runs[i][0]*60+runs[i][1] > hNow){ next = runs[i]; break; }
     }
-    function fmt(n) { return new Intl.NumberFormat("id-ID").format(n); }
-    function scoreColor(v) { return v >= 75 ? "#3FB68C" : v >= 55 ? "#C9A227" : "#E2574C"; }
+  }
+  document.getElementById('nextRun').innerHTML = next
+    ? 'Run berikutnya: <b>' + next[2] + '</b> pukul <b>' +
+      String(next[0]).padStart(2,'0') + ':' + String(next[1]).padStart(2,'0') + ' WIB</b>'
+    : (day===0 || day===6 ? 'Akhir pekan — pasar tutup.' : 'Run hari ini selesai. Berikutnya: London 15:15 WIB.');
 
-    function combined(s) { return Math.round((s.technicalScore + s.fundamentalScore) / 2); }
+  // ---------- muat sinyal ----------
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
-    function sigStatus(s) { return s.status === "pantau" ? "pantau" : "aktif"; }
+  function relTime(iso){
+    var mins = Math.round((Date.now() - new Date(iso).getTime())/60000);
+    if (mins < 60) return mins + ' menit lalu';
+    var h = Math.round(mins/60);
+    if (h < 24) return h + ' jam lalu';
+    return Math.round(h/24) + ' hari lalu';
+  }
 
-    function filteredSignals() {
-      var q = state.query.toLowerCase();
-      var list = (state.data && state.data.signals) ? state.data.signals.slice() : [];
-      list = list.filter(function (s) {
-        var mq = s.ticker.toLowerCase().indexOf(q) !== -1 ||
-                 String(s.name || "").toLowerCase().indexOf(q) !== -1;
-        var mt = state.tab === "Semua" || s.strategy === state.tab;
-        var mp = state.showPantau || sigStatus(s) === "aktif";
-        return mq && mt && mp;
-      });
-      list.sort(function (a, b) {
-        var st = (sigStatus(a) === "aktif" ? 0 : 1) - (sigStatus(b) === "aktif" ? 0 : 1);
-        if (st !== 0) return st;
-        return combined(b) - combined(a);
-      });
-      return list;
-    }
+  function card(s){
+    var watch = s.status === 'WATCH';
+    return '<div class="card signal-' + esc(s.direction) + (watch?' watch':'') + '">' +
+      '<div class="card-top">' +
+        '<div class="pair mono">' + esc(s.pair) + '</div>' +
+        '<div class="badges">' +
+          (watch ? '<span class="badge WATCH">Watch</span>' : '') +
+          '<span class="badge ' + esc(s.direction) + '">' + esc(s.direction) + '</span>' +
+          '<span class="badge trend">H4 ' + (s.trend_h4==='up'?'▲':'▼') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="levels mono">' +
+        '<div class="lv entry"><span class="k">' + (watch?'Entry (pending)':'Entry') + '</span><span class="v">' + esc(s.entry) + '</span></div>' +
+        '<div class="lv"><span class="k">Harga</span><span class="v">' + esc(s.price) + '</span></div>' +
+        '<div class="lv sl"><span class="k">SL</span><span class="v">' + esc(s.sl) + '</span></div>' +
+        '<div class="lv tp"><span class="k">TP1</span><span class="v">' + esc(s.tp1) + '</span></div>' +
+        '<div class="lv"><span class="k">Range</span><span class="v">' + esc(s.range_low) + '–' + esc(s.range_high) + '</span></div>' +
+        '<div class="lv tp"><span class="k">TP2</span><span class="v">' + esc(s.tp2) + '</span></div>' +
+      '</div>' +
+      '<div class="sub"><span>ATR H1: <span class="mono">' + esc(s.atr_h1) + '</span></span>' +
+      '<span>SL: <span class="mono">' + esc(s.sl_pips) + '</span> pip</span></div>' +
+    '</div>';
+  }
 
-    function badge(strategy) {
-      var meta = STRATEGY_META[strategy] || STRATEGY_META["Semua"];
-      return '<span class="badge" style="color:' + meta.color +
-        ';border:1px solid ' + meta.color + '55;background:' + meta.color + '14">' +
-        esc(strategy) + '</span>';
-    }
+  fetch('signals.json?t=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(data){
+      var mins = (Date.now() - new Date(data.generated_at).getTime())/60000;
+      var stale = mins > 8*60;
+      document.getElementById('meta').innerHTML =
+        '<span class="mode-tag">' + esc(data.mode) + '</span>' +
+        '<span class="' + (stale?'stale':'') + '">diperbarui ' + relTime(data.generated_at) +
+        (stale?' — data lama':'') + '</span>';
 
-    function renderTabs() {
-      var html = "";
-      Object.keys(STRATEGY_META).forEach(function (s) {
-        var meta = STRATEGY_META[s];
-        var on = state.tab === s;
-        html += '<button class="tab" data-tab="' + s + '" style="' +
-          (on ? "border-color:" + meta.color + ";background:" + meta.color + "14;color:" + meta.color : "") +
-          '">' + s + '</button>';
-      });
-      html += '<span class="tab-desc">' + esc(STRATEGY_META[state.tab].desc) + '</span>';
-      document.getElementById("tabs").innerHTML = html;
-    }
-
-    function renderHeader() {
-      var d = state.data;
-      document.getElementById("session-label").textContent =
-        d && SESSION_LABEL[d.session] ? SESSION_LABEL[d.session] : "…";
-      var u = document.getElementById("updated-label");
-      if (state.status === "loading") u.textContent = "Memuat data…";
-      else if (state.status === "error") u.textContent = "⚠ Gagal memuat signals.json";
-      else if (d && d.generatedAt) {
-        var label = new Intl.DateTimeFormat("id-ID", {
-          weekday: "long", day: "numeric", month: "long",
-          hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta"
-        }).format(new Date(d.generatedAt));
-        u.textContent = "Update terakhir: " + label + " WIB";
-      } else u.textContent = "—";
-    }
-
-    function renderTable() {
-      var list = filteredSignals();
-      var tbody = document.getElementById("tbody");
-      var all = (state.data && state.data.signals) || [];
-      var nA = all.filter(function (s) { return sigStatus(s) === "aktif"; }).length;
-      var nP = all.length - nA;
-      document.getElementById("count").textContent =
-        state.status === "live" ? nA + " aktif · " + nP + " pantau" : "";
-
-      if (state.status === "loading") {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">Memuat sinyal…</td></tr>';
-        return;
+      var sig = data.signals.filter(function(s){ return s.status === 'SIGNAL'; });
+      var wat = data.signals.filter(function(s){ return s.status !== 'SIGNAL'; });
+      var html = '';
+      html += '<div class="section-title">Sinyal aktif (' + sig.length + ')</div>';
+      html += sig.length
+        ? '<div class="grid">' + sig.map(card).join('') + '</div>'
+        : '<div class="empty">Belum ada breakout terkonfirmasi sesi ini. Pantau level pending di bawah.</div>';
+      if (wat.length){
+        html += '<div class="section-title">Pantau — menunggu breakout (' + wat.length + ')</div>';
+        html += '<div class="grid">' + wat.map(card).join('') + '</div>';
       }
-      if (state.status === "error") {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty err">' +
-          'Gagal memuat data. Pastikan signals.json ada di repo dan halaman dibuka lewat GitHub Pages.</td></tr>';
-        return;
-      }
-      if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">Tidak ada sinyal ' +
-          (state.tab !== "Semua" ? esc(state.tab) + " " : "") + 'di sesi ini.</td></tr>';
-        return;
-      }
-
-      var activeKey = getActiveKey(list);
-      var html = "";
-      list.forEach(function (s) {
-        var key = s.ticker + "-" + s.strategy;
-        var c = combined(s);
-        var pantau = sigStatus(s) === "pantau";
-        html += '<tr data-key="' + esc(key) + '" class="' +
-          (key === activeKey ? "active " : "") + (pantau ? "pantau" : "") + '">' +
-          '<td><div class="ticker">' + esc(s.ticker) + '</div>' +
-          '<div class="sub">' + esc(s.name) + '</div></td>' +
-          '<td>' + badge(s.strategy) +
-          (pantau ? '<span class="chip-pantau">Pantau</span>' : '') +
-          '<div class="setup-sub">' + esc(s.setup) + '</div></td>' +
-          '<td class="right mono">' + fmt(s.price) + '</td>' +
-          '<td class="right"><span class="mono" style="font-weight:600;color:' + scoreColor(c) + '">' + c + '</span></td>' +
-          '</tr>';
-      });
-      tbody.innerHTML = html;
-    }
-
-    function getActiveKey(list) {
-      if (state.selected) {
-        for (var i = 0; i < list.length; i++) {
-          if (list[i].ticker + "-" + list[i].strategy === state.selected) return state.selected;
-        }
-      }
-      return list.length ? list[0].ticker + "-" + list[0].strategy : null;
-    }
-
-    function barRow(label, value) {
-      return '<div class="bar-row">' +
-        '<span class="bar-label">' + label + '</span>' +
-        '<div class="bar-track"><div class="bar-fill" style="width:' + value + '%;background:' + scoreColor(value) + '"></div></div>' +
-        '<span class="bar-val" style="color:' + scoreColor(value) + '">' + value + '</span></div>';
-    }
-
-    function riskMap(s) {
-      var min = s.sl, max = s.tp2, range = (max - min) || 1;
-      function pos(v) { return ((v - min) / range) * 100; }
-      var rr = ((s.tp1 - s.entry) / Math.max(s.entry - s.sl, 1)).toFixed(2);
-      var markers = [
-        { v: s.sl, k: "SL", c: "#E2574C" },
-        { v: s.entry, k: "Entry", c: "#C9A227" },
-        { v: s.tp1, k: "TP1", c: "#3FB68C" },
-        { v: s.tp2, k: "TP2", c: "#3FB68C" }
-      ];
-      var html = '<div class="riskmap">' +
-        '<div class="riskmap-head"><span class="riskmap-title">Peta Risiko</span>' +
-        '<span class="riskmap-rr">R:R ke TP1&nbsp; <b>' + rr + '</b></span></div>' +
-        '<div class="riskmap-track">' +
-        '<div class="zone" style="left:0;width:' + pos(s.entry) + '%;background:rgba(226,87,76,0.2);border-radius:6px 0 0 6px"></div>' +
-        '<div class="zone" style="left:' + pos(s.entry) + '%;width:' + (100 - pos(s.entry)) + '%;background:rgba(63,182,140,0.15)"></div>';
-      markers.forEach(function (m) {
-        html += '<div class="marker-line" style="left:' + pos(m.v) + '%;background:' + m.c + '"></div>';
-      });
-      html += '</div><div class="riskmap-labels">';
-      markers.forEach(function (m) {
-        html += '<div class="marker-label" style="left:' + pos(m.v) + '%">' +
-          '<span class="k">' + m.k + '</span><span class="v">' + fmt(m.v) + '</span></div>';
-      });
-      html += '</div></div>';
-      return html;
-    }
-
-    function renderPanel() {
-      var panel = document.getElementById("panel");
-      if (state.status !== "live") {
-        panel.innerHTML = '<p class="sub">' +
-          (state.status === "loading" ? "Memuat…" : "Data tidak tersedia.") + '</p>';
-        return;
-      }
-      var list = filteredSignals();
-      var key = getActiveKey(list);
-      var s = null;
-      for (var i = 0; i < list.length; i++) {
-        if (list[i].ticker + "-" + list[i].strategy === key) { s = list[i]; break; }
-      }
-      if (!s) {
-        panel.innerHTML = '<p class="sub">Pilih emiten di tabel untuk melihat detail.</p>';
-        return;
-      }
-      panel.innerHTML =
-        '<div class="panel-head"><div>' +
-        '<h2>' + esc(s.ticker) + '</h2>' +
-        '<p class="sub">' + esc(s.name) + ' · ' + esc(s.sector) + '</p></div>' +
-        '<div class="panel-right">' + badge(s.strategy) +
-        (sigStatus(s) === "pantau" ? '<span class="chip-pantau">Pantau</span>' : '') +
-        '<span class="setup-label">' + esc(s.setup) + '</span></div></div>' +
-        (sigStatus(s) === "pantau"
-          ? '<div class="warn-box">⚠ Setup ini <b>tidak lolos backtest</b> dan ' +
-            'ditampilkan hanya untuk observasi — bukan sinyal trade.</div>'
-          : '') +
-        '<div class="bars">' + barRow("Teknikal", s.technicalScore) + barRow("Fundamental", s.fundamentalScore) + '</div>' +
-        riskMap(s) +
-        '<div class="notes"><p class="notes-title">Catatan</p>' +
-        '<p class="notes-body">' + esc(s.notes) + '</p></div>';
-    }
-
-    function renderAll() {
-      renderHeader(); renderTabs(); renderTable(); renderPanel();
-    }
-
-    // --- Events (delegated) ---
-    document.getElementById("tabs").addEventListener("click", function (e) {
-      var btn = e.target.closest("[data-tab]");
-      if (!btn) return;
-      state.tab = btn.getAttribute("data-tab");
-      state.selected = null;
-      renderAll();
+      document.getElementById('content').innerHTML = html;
+    })
+    .catch(function(e){
+      document.getElementById('content').innerHTML =
+        '<div class="empty error">Gagal memuat signals.json (' + esc(e.message) +
+        '). Pastikan workflow sudah pernah jalan dan file ada di root repo.</div>';
+      document.getElementById('meta').textContent = '';
     });
-    document.getElementById("tbody").addEventListener("click", function (e) {
-      var row = e.target.closest("[data-key]");
-      if (!row) return;
-      state.selected = row.getAttribute("data-key");
-      renderTable(); renderPanel();
-    });
-    document.getElementById("search").addEventListener("input", function (e) {
-      state.query = e.target.value;
-      renderTable(); renderPanel();
-    });
-    document.getElementById("toggle-pantau").addEventListener("click", function () {
-      state.showPantau = !state.showPantau;
-      var btn = document.getElementById("toggle-pantau");
-      btn.textContent = "Pantau: " + (state.showPantau ? "tampil" : "sembunyi");
-      btn.className = "toggle" + (state.showPantau ? " on" : "");
-      renderTable(); renderPanel();
-    });
-
-    // --- Load data ---
-    (function load() {
-      var i = 0;
-      function tryNext() {
-        if (i >= DATA_SOURCES.length) {
-          state.status = "error"; renderAll(); return;
-        }
-        var url = DATA_SOURCES[i++] + "?t=" + Date.now();
-        fetch(url)
-          .then(function (res) {
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            return res.json();
-          })
-          .then(function (json) {
-            if (json && Object.prototype.toString.call(json.signals) === "[object Array]") {
-              state.data = json; state.status = "live"; renderAll();
-            } else throw new Error("format tidak dikenal");
-          })
-          .catch(tryNext);
-      }
-      tryNext();
-    })();
-
-    renderAll();
-  </script>
+})();
+</script>
 </body>
 </html>
