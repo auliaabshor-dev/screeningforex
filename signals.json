@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T15:14:16.739113+00:00",
+  "generated_at": "2026-10-26T19:16:20.224665+00:00",
   "mode": "ny",
   "disclaimer": "Alat bantu screening pribadi, bukan saran finansial.",
   "signals": [
@@ -11,13 +11,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 1.12196,
       "range_low": 1.1197,
-      "price": 1.11869,
-      "entry": 1.11869,
-      "sl": 1.11997,
-      "tp1": 1.11699,
-      "tp2": 1.11614,
-      "atr_h1": 0.00085,
-      "sl_pips": 12.8
+      "price": 1.11832,
+      "entry": 1.11832,
+      "sl": 1.11981,
+      "tp1": 1.11633,
+      "tp2": 1.11534,
+      "atr_h1": 0.00099,
+      "sl_pips": 14.9
     },
     {
       "pair": "GBPUSD",
@@ -27,13 +27,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 1.33756,
       "range_low": 1.33435,
-      "price": 1.33458,
-      "entry": 1.33767,
-      "sl": 1.33602,
-      "tp1": 1.33987,
-      "tp2": 1.34097,
-      "atr_h1": 0.0011,
-      "sl_pips": 16.5
+      "price": 1.3346,
+      "entry": 1.33768,
+      "sl": 1.33587,
+      "tp1": 1.3401,
+      "tp2": 1.34131,
+      "atr_h1": 0.00121,
+      "sl_pips": 18.1
     },
     {
       "pair": "USDJPY",
@@ -43,13 +43,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 157.444,
       "range_low": 156.92,
-      "price": 157.501,
+      "price": 157.468,
       "entry": 156.902,
-      "sl": 157.178,
-      "tp1": 156.532,
-      "tp2": 156.348,
-      "atr_h1": 0.185,
-      "sl_pips": 27.7
+      "sl": 157.165,
+      "tp1": 156.552,
+      "tp2": 156.377,
+      "atr_h1": 0.175,
+      "sl_pips": 26.3
     },
     {
       "pair": "AUDUSD",
@@ -59,13 +59,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 0.70418,
       "range_low": 0.70279,
-      "price": 0.70185,
-      "entry": 0.70423,
-      "sl": 0.70336,
-      "tp1": 0.7054,
-      "tp2": 0.70598,
-      "atr_h1": 0.00058,
-      "sl_pips": 8.7
+      "price": 0.7021,
+      "entry": 0.70424,
+      "sl": 0.70332,
+      "tp1": 0.70546,
+      "tp2": 0.70608,
+      "atr_h1": 0.00061,
+      "sl_pips": 9.2
     },
     {
       "pair": "USDCAD",
@@ -75,13 +75,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 1.40265,
       "range_low": 1.4005,
-      "price": 1.404,
-      "entry": 1.40036,
-      "sl": 1.40248,
-      "tp1": 1.39753,
-      "tp2": 1.39612,
-      "atr_h1": 0.00141,
-      "sl_pips": 21.2
+      "price": 1.40226,
+      "entry": 1.40033,
+      "sl": 1.40282,
+      "tp1": 1.39701,
+      "tp2": 1.39535,
+      "atr_h1": 0.00166,
+      "sl_pips": 24.9
     },
     {
       "pair": "NZDUSD",
@@ -91,13 +91,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 0.57013,
       "range_low": 0.56844,
-      "price": 0.56802,
-      "entry": 0.57018,
-      "sl": 0.56938,
-      "tp1": 0.57124,
-      "tp2": 0.57177,
-      "atr_h1": 0.00053,
-      "sl_pips": 7.9
+      "price": 0.56844,
+      "entry": 0.57019,
+      "sl": 0.56928,
+      "tp1": 0.57139,
+      "tp2": 0.57199,
+      "atr_h1": 0.0006,
+      "sl_pips": 9.0
     },
     {
       "pair": "USDCHF",
@@ -107,13 +107,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 0.82667,
       "range_low": 0.82396,
-      "price": 0.82686,
-      "entry": 0.82686,
-      "sl": 0.8253,
-      "tp1": 0.82894,
-      "tp2": 0.82999,
-      "atr_h1": 0.00104,
-      "sl_pips": 15.6
+      "price": 0.82751,
+      "entry": 0.82751,
+      "sl": 0.82587,
+      "tp1": 0.8297,
+      "tp2": 0.83079,
+      "atr_h1": 0.00109,
+      "sl_pips": 16.4
     },
     {
       "pair": "XAUUSD",
@@ -123,13 +123,13 @@
       "session": "London range \u2192 NY breakout",
       "range_high": 4036.2,
       "range_low": 4016.1,
-      "price": 4038.9,
-      "entry": 4014.72,
-      "sl": 4035.37,
-      "tp1": 3987.2,
-      "tp2": 3973.43,
-      "atr_h1": 13.76,
-      "sl_pips": 206.5
+      "price": 4022.8,
+      "entry": 4014.83,
+      "sl": 4033.93,
+      "tp1": 3989.36,
+      "tp2": 3976.62,
+      "atr_h1": 12.74,
+      "sl_pips": 191.0
     }
   ]
 }
